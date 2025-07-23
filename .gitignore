@@ -1,0 +1,11 @@
+build/
+.cache/
+
+src/*.ninja
+build.ninja
+.ninja_log
+.ninja_deps
+
+Makefile
+
+compile_commands.json
