@@ -12,5 +12,6 @@ workspace "tier_0"
   defaultplatform "x86_64"
   
   include "src/tier_0.lua"
+  include "tests/tests.lua"
 
   print("project count: ", _G.project_count)

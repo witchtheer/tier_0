@@ -2,11 +2,14 @@ group "lib"
 
 project "tier_0"
   kind "StaticLib"
-  language "C++"
+  language "C"
 
   print("Current working directory:", os.getcwd())
   print("Looking for files in src/perf/...")
-  
+
+  local asm_files = os.matchfiles("perf/arch/x86/*.s")
+  print("ASM files:", table.concat(asm_files, ", "))
+
   local perf_files = os.matchfiles("perf/**.c")
   print("Found perf C files:", table.concat(perf_files, ", "))
   
@@ -41,7 +44,6 @@ project "tier_0"
   filter "platforms:x86"
     files
     {
-      "perf/arch/x86/*.s",
       "perf/arch/x86/*.c",
       "perf/arch/x86/*.h",
       "perf/arch/x86/*.cpp",
@@ -51,7 +53,6 @@ project "tier_0"
   filter "platforms:x86_64"
     files
     {
-      "perf/arch/x86_64/*.s",
       "perf/arch/x86_64/*.c",
       "perf/arch/x86_64/*.h",
       "perf/arch/x86_64/*.cpp",
@@ -67,7 +68,6 @@ project "tier_0"
     "perf/**.h",
     "perf/**.hpp",
   }
-
   -- utils
   files 
   {
@@ -79,8 +79,8 @@ project "tier_0"
 
   files 
   {
-    "platforms/shared/*.c",
-    "platforms/shared/*.h"
+    "platform/shared/*.c",
+    "platform/shared/*.h"
   }
 
   includedirs
@@ -88,42 +88,4 @@ project "tier_0"
     ".",
     "%{wks.location}/include"
   }
-
-  -- Assembly build rules with hardcoded paths
-  filter { "files:perf/arch/x86/_counters.s", "platforms:x86" }
-    if _ACTION ~= "ninja" then
-      buildmessage "Assembling _counters.s"
-    end
-    buildcommands
-    {
-      "mkdir -p %{cfg.objdir} && clang -c -m32 src/perf/arch/x86/_counters.s -o %{cfg.objdir}/_counters.o"
-    }
-    buildoutputs
-    {
-      "%{cfg.objdir}/_counters.o"
-    }
-    buildinputs
-    {
-      "perf/arch/x86/_counters.s"
-    }
-
-  filter { "files:perf/arch/x86_64/_counters.s", "platforms:x86_64" }
-    if _ACTION ~= "ninja" then
-      buildmessage "Assembling _counters.s"
-    end
-    buildcommands 
-    {
-      "mkdir -p %{cfg.objdir} && clang -c -m64 src/perf/arch/x86_64/_counters.s -o %{cfg.objdir}/_counters.o"
-    }
-    buildoutputs
-    {
-      "%{cfg.objdir}/_counters.o"
-    }
-    buildinputs
-    {
-      "perf/arch/x86_64/_counters.s"
-    }
-
-  filter {}
-
 increment_project_counter()

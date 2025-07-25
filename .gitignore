@@ -2,10 +2,12 @@ build/
 .cache/
 
 src/*.ninja
+tests/configs/*.ninja
 build.ninja
 .ninja_log
 .ninja_deps
 
+.*.plist
 Makefile
 
 compile_commands.json
